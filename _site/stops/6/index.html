@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+  <head>
+  <meta name="format-detection" content="telephone=no">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <!-- place fav icons here -->
+
+  <title>The Engine Shed</title>
+  <meta name="description" content="The National Railway Museum Audio Guide.
+">
+
+  <!-- Twitter cards and OG Image for Facebook -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="" />
+  <meta name="twitter:creator" content="" />
+  <meta name="twitter:title" content="The Engine Shed" />
+  <meta name="twitter:description" content="The National Railway Museum Audio Guide.
+" />
+
+  <meta name="og:image" content="http://localhost:4000/NRMaudioguide/assets/img/meta/og-image.jpg" />
+  <meta name="twitter:image" content="http://localhost:4000/NRMaudioguide/assets/img/meta/og-image.jpg" />
+
+  <!-- Canonical urls -->
+
+  <link rel="canonical" href="http://localhost:4000/NRMaudioguide/stops/6/">
+  <link rel="alternate" type="application/rss+xml" title="The National Railway Museum Audio Guide" href="http://localhost:4000/NRMaudioguide/feed.xml">
+
+  <!-- Stylesheets -->
+
+  <link rel="stylesheet" type="text/css" href="/NRMaudioguide/assets/js/slick.css" />
+  <link rel="stylesheet" type="text/css" href="/NRMaudioguide/assets/js/slick-theme.css" />
+
+  <!-- jQuery -->
+  <script src="/NRMaudioguide/assets/js/jquery-1.12.3.min.js"></script>
+  <script src="/NRMaudioguide/assets/js/slick.min.js"></script>
+
+  <!-- jPlayer -->
+  <script src="/NRMaudioguide/assets/js/jplayer/jquery.jplayer.min.js"></script>
+
+  <!-- CSS for this web app -->
+  <link rel='stylesheet' href='/NRMaudioguide/assets/css/main.css?v=2.0.1.2'>
+
+  <script type="text/javascript">
+
+// The JS code here is render blocking. We liked it this way, but you might want to change it if this sort of thing
+// worries you. More info on this here: https://varvy.com/pagespeed/render-blocking.html
+// The advantage of render blocking the below code is to prevent some flicker on page-load to make the audio guide
+// feel a little more 'app-like', but you mightn't find it necessary.
+
+
+// add fixedPosition support check, pulled from jQuery Mobile
+// This isn't a true check, but just flagging browsers with known issues with fixed positioning.
+// This is preferable to attempting to do a real check given the current widespread support for
+// Fixed positioning, so the devices that still have problems with it are fairly well known
+
+function fixedPosition() {
+  var w = window,
+    ua = navigator.userAgent,
+    platform = navigator.platform,
+    // Rendering engine is Webkit, and capture major version
+    wkmatch = ua.match( /AppleWebKit\/([0-9]+)/ ),
+    wkversion = !!wkmatch && wkmatch[ 1 ],
+    ffmatch = ua.match( /Fennec\/([0-9]+)/ ),
+    ffversion = !!ffmatch && ffmatch[ 1 ],
+    operammobilematch = ua.match( /Opera Mobi\/([0-9]+)/ ),
+    omversion = !!operammobilematch && operammobilematch[ 1 ];
+
+  if (
+    // iOS 4.3 and older : Platform is iPhone/Pad/Touch and Webkit version is less than 534 (ios5)
+    ( ( platform.indexOf( "iPhone" ) > -1 || platform.indexOf( "iPad" ) > -1  || platform.indexOf( "iPod" ) > -1 ) && wkversion && wkversion < 534 ) ||
+    // Opera Mini
+    ( w.operamini && ({}).toString.call( w.operamini ) === "[object OperaMini]" ) ||
+    ( operammobilematch && omversion < 7458 ) ||
+    //Android lte 2.1: Platform is Android and Webkit version is less than 533 (Android 2.2)
+    ( ua.indexOf( "Android" ) > -1 && wkversion && wkversion < 533 ) ||
+    // Firefox Mobile before 6.0 -
+    ( ffversion && ffversion < 6 ) ||
+    // WebOS less than 3
+    ( "palmGetResource" in window && wkversion && wkversion < 534 ) ||
+    // MeeGo
+    ( ua.indexOf( "MeeGo" ) > -1 && ua.indexOf( "NokiaBrowser/8.5.0" ) > -1 ) ) {
+    return false;
+  }
+
+  return true;
+}
+
+$.extend( $.support, {
+  fixedPosition: fixedPosition()
+});
+
+// fixed position audio player
+
+if ($.support.fixedPosition) {
+ $("<style>").prop("type", "text/css").html("\
+    .audio-footer-container { \
+      position: fixed; \
+    }")
+  .appendTo("head");
+}
+
+// Prevent links from opening in a new window when viewing from iOS home screen
+// Helps ensure a more 'web appy' expierence.
+// Adjusted from gist posted by Github user @irae on @kylebarrow's Gist at:
+// https://gist.github.com/kylebarrow/1042026
+// this snippet available at: https://gist.github.com/irae/1042167
+// It's a whole document event listener, so will continue to work even if other links are added to the DOM after
+// the initial pageload. The while loop ensures that it bubbles up to hit any anchor links that have been clicked.
+
+  (function(document,navigator,standalone) {
+    // prevents links from apps from oppening in mobile safari
+    // this javascript must be the first script in your <head>
+    if ((standalone in navigator) && navigator[standalone]) {
+      var curnode, location=document.location, stop=/^(a|html)$/i;
+      document.addEventListener('click', function(e) {
+        curnode=e.target;
+
+        while (!(stop).test(curnode.nodeName)) {
+          curnode=curnode.parentNode;
+        }
+        // Condidions to do this only on links to your own app
+        // if you want all links, use if('href' in curnode) instead.
+        if (curnode.className.indexOf("dont-use-ios-override") == -1) {
+          if(
+            'href' in curnode && // is a link
+            (chref=curnode.href).replace(location.href,'').indexOf('#') && // is not an anchor
+            ( !(/^[a-z\+\.\-]+:/i).test(chref) ||                       // either does not have a proper scheme (relative links)
+              chref.indexOf(location.protocol+'//'+location.host)===0 ) // or is in the same protocol and domain
+          ) {
+            e.preventDefault();
+            location.href = curnode.href;
+          }
+        }
+      },false);
+    }
+  })(document,window.navigator,'standalone');
+
+// Initialise jPlayer, grabbed the MP3 source file from the audio element on the page.
+$(document).ready(function(){
+
+  $("#jquery_jplayer_1").jPlayer({
+    ready: function () {
+      $("#episode-element").hide();
+      $(this).jPlayer("setMedia", {
+        title: "",
+        mp3: $("#episode-source").attr("src")
+      });
+
+    },
+    swfPath: "/NRMaudioguide/assets/js/jplayer",
+    supplied: "mp3",
+    wmode: "window",
+    useStateClassSkin: true,
+    autoBlur: false,
+    smoothPlayBar: true,
+    keyEnabled: true,
+    remainingDuration: true,
+    toggleDuration: true
+  });
+});
+
+  </script>
+    <!-- JS for this web app -->
+  <script src="/NRMaudioguide/assets/js/main.js?v=2.0.1.2"></script>
+</head>
+
+
+  <body>
+    <!-- Google Tag Manager -->
+
+<!-- drop in your Google Tag Manager or Analytics snippet here! -->
+
+<!-- Google Tag Manager -->
+<!-- old google tag
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MLM89SC');</script>
+<!-- End Google Tag Manager -->
+
+
+<!-- Google Tag Manager (noscript) -->
+<!-- old google tag
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MLM89SC"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<!-- End Google Tag Manager -->
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NNLRXDT');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NNLRXDT"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <header class="site-header">
+<!--
+  <div class="site-header-wrapper">
+
+    <h1 class="post-header-section-title">Great Hall</h1>
+    <a class="site-header-back-button" href="/NRMaudioguide/">
+      <img src="/NRMaudioguide/assets/img/icons/button_back.png"/>
+    </a>
+
+    <a class="site-title" href="/NRMaudioguide/">
+      <img src="/NRMaudioguide/assets/img/logo/masthead-nrm-logo.png" alt="The National Railway Museum Audio Guide logo" class="site-logo"/>
+    </a>
+
+    <a class="site-header-menu-button dont-use-ios-override" href="/NRMaudioguide/">
+      <img src="/NRMaudioguide/assets/img/icons/menu_icon.png"/>
+    </a>
+
+  </div>
+-->
+</header>
+
+    <div class="slide-menu">
+<!--  <h2></h2>-->
+  <ul class="post-list">
+    
+    <li>
+        <a class="post-link" href="/NRMaudioguide/stops/1/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">1</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/2/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">2</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/3/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">3</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/4/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">4</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/5/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">5</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/6/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">6</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/7/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">7</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/8/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">8</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/9/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">9</span>
+        </a>
+      </li><li>
+        <a class="post-link" href="/NRMaudioguide/stops/10/" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-dark.png');">
+          <span class="post-item">10</span>
+        </a>
+      </li>
+  </ul>
+</div>
+
+    <div class="page-content">
+      <div class="wrapper">
+        <html lang="en-GB">
+<article class="post">
+  <div>
+     <img src="/NRMaudioguide/assets/img/stops/banner.png" alt="audio trail banner" style= "padding-bottom: 20px;">
+  </div>
+  <header class="post-header">
+    <div class="post-title-episode">
+      <div class="post-header-stop-id" style="background-image: url('/NRMaudioguide/assets/img/icons/headphones-light.png');"><span>6</span></div>
+      
+        <h1 class="post-header-section-title">Great Hall</h1>
+      
+      
+        <h2 class="post-header-title">The Engine Shed</h2>
+      
+    </div>
+  </header>
+
+  
+    <div class="slick-container post-hero-image-container">
+      <div class="slick-post-hero-image">
+        
+          <div class="post-hero-image">
+            <img src="/NRMaudioguide/assets/img/stops/6 The noisy engine shed_duo.jpg" alt="York North Engine Shed, 1950. Science Museum Group. Image no. 1994-7556_ET_NE_G_682."/>
+          </div>
+        
+      </div>
+    </div>
+  
+  <div class="post-content">
+    <h3 id="york-north-engine-shed-1950-science-museum-group-image-no-1994-7556_et_ne_g_682">York North Engine Shed, 1950. Science Museum Group. Image no. 1994-7556_ET_NE_G_682.</h3>
+
+<p>Located where we are right now, it’s hard to believe that the Great Hall was ever anything other than a very large, very clean museum space. But let’s imagine we’ve gone back in time a hundred years and we’re actually in the middle of a dark, oily, noisy engine shed. From its opening in 1878, all the way up to 1973 when the building began its transformation to become the National Railway Museum, this was the place where locomotives were stored and maintained, first by the North Eastern Railway, which went on to become the London and North Eastern Railway, and later by British Railways.<space><space></space></space></p>
+
+<p>The photograph on your phone gives us a real indicator of what York North Engine Shed looked like back when it was in full use. It was taken in the early 1950s by Bishop Eric Treacy, a celebrated railway photographer of his day. But let’s go one step further and really get some dirt under our fingernails so we can form a genuine sense of what the site used to be like.<space><space></space></space></p>
+
+<p>Look up at the ceiling and imagine pulling it down so it’s just a couple of metres above our heads. Imagine collecting an endless concoction of oil, soot, muck and grime, and cover it over everything, including the wonderful locomotives we have on display here – they certainly wouldn’t have looked so polished! Now take a deep breath and smell the air, there’s burnt coal in the atmosphere; the smell of steam, diesel and cigarettes from the workers all around us. And finally, there’s the noise: the sound of shovels as ash is removed from locomotives after long journeys, the endless clicking as metal cools before everything is cleaned and the shouting of staff as they work inside machines, clearing the firebox and washing the boilers.<space><space></space></space></p>
+
+<p>This was the lifeline of York’s rail network, allowing vital maintenance to take place a stone’s throw from the local goods and passenger stations. Without it, the railway simply wouldn’t have been able to operate.</p>
+
+<h3 id="sound-effects-neil-hipkiss-sfxbaycom">Sound effects: Neil Hipkiss, SFXBAY.com</h3>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+<div id="jp_container_1" class="jp-audio" role="application" aria-label="media player">
+  <div class="jp-gui jp-interface audio-footer-container" data-role="footer" data-position="fixed" data-tap-toggle="false">
+    <div class="audio-player">
+
+      <div class="player-now-playing" >
+        <p>
+        The Engine Shed
+        </p>
+      </div>
+
+      
+      <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+
+        <div id="episode-element">
+        <audio>
+          <source id="episode-source" src="/NRMaudioguide/music/AP6_v2.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+        </audio>
+      </div>
+
+      <div class="jp-progress">
+        <div class="jp-seek-bar">
+         <div class="jp-play-bar"></div>
+        </div>
+      </div>
+
+      <div class="jp-no-solution">
+        <span>Update Required</span>
+        To play audio, be sure to enable JavaScript, and run a browser that supports HTML5 MP3 audio, or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+      </div>
+
+      
+
+      <div class="player-buttons">
+        <div class="player-buttons-prev">
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+              <a href="/NRMaudioguide/stops/5/"></a>
+              <span class="player-buttons-prev-number">5</span>
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        </div>
+
+        
+        <div class="jp-controls" style="display: inline-block; text-align: center;">
+          <button class="jp-play" tabindex="0" style="display: inline-block;" aria-label="Play Button"></button>
+        </div>
+        
+
+        <div class="player-buttons-next">
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+              <a href="/NRMaudioguide/stops/7/"></a>
+              <span class="player-buttons-next-number">7</span>
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  </div>
+
+  </body>
+
+</html>
